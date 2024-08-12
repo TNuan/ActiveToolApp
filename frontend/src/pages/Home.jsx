@@ -7,6 +7,9 @@ function Home() {
     const [notes, setNotes] = useState([]);
     const [content, setContent] = useState("");
     const [title, setTitle] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const [isEnterOTP, setIsEnterOTP] = useState(false);
+    const [otp, setOtp] = useState("");
 
     useEffect(() => {
         getNotes();
@@ -48,7 +51,31 @@ function Home() {
 
     const getSession = (e) => {
         e.preventDefault();
+        setIsEnterOTP(true);
+        api.post("/api/sessions/start_getsession/", { phoneNumber: phoneNumber })
+            .then((res) => {
+                if (res.status === 201) {
+                    console.log("Session", res);
+                    setIsEnterOTP(false);
+                } else alert("Failed to make session");
+                getNotes();
+            })
+            .catch((err) => alert(err));
     };
+
+    const submitOtp = (e) => {
+        e.preventDefault();
+        setIsEnterOTP(true);
+        api.post("/api/sessions/receive_opt/", { otp: otp })
+            .then((res) => {
+                if (res.status === 200) {
+                    console.log("Otp", res);
+                    alert("Nhập otp thành công");
+                } else alert("Failed to make session");
+                getNotes();
+            })
+            .catch((err) => alert(err));
+    }
 
     return (
         <div>
@@ -82,31 +109,40 @@ function Home() {
                 <br />
                 <input type="submit" value="Submit"></input>
             </form>
-            
+
             <h2>Get session</h2>
             <form onSubmit={getSession}>
-                <label htmlFor="title">Title:</label>
+                <label htmlFor="title">Nhập số điện thoại (VD:+84 359468511) :</label>
                 <br />
                 <input
                     type="text"
-                    id="title"
-                    name="title"
+                    id="phonenum"
+                    name="phonenum"
                     required
-                    onChange={(e) => setTitle(e.target.value)}
-                    value={title}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    value={phoneNumber}
                 />
-                <label htmlFor="content">Content:</label>
-                <br />
-                <textarea
-                    id="content"
-                    name="content"
-                    required
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                ></textarea>
-                <br />
-                <input type="submit" value="Submit"></input>
+                {!isEnterOTP ? (
+                <input type="submit" value="Submit"></input>) : (<></>)}
             </form>
+
+            {isEnterOTP ? (
+                <>
+                    <form onSubmit={submitOtp}>
+                        <label htmlFor="title">Nhập OTP được gửi về tele {phoneNumber} :</label>
+                        <br />
+                        <input
+                            type="text"
+                            id="otp"
+                            name="otp"
+                            required
+                            onChange={(e) => setOtp(e.target.value)}
+                            value={otp}
+                        />
+                        <input type="submit" value="Submit"></input>
+                    </form>
+                </>
+            ) : (<></>)}
         </div>
     );
 }
