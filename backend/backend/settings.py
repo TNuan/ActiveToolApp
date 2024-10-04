@@ -41,7 +41,7 @@ DATABASES = {
         'ENGINE': env('DB_ENGINE', default='django.db.backends.postgresql_psycopg2'),
         'NAME': env('DB_NAME', default='activetooldb'),
         'USER': env('DB_USER', default='activetoolapp'),
-        'PASSWORD': env('DB_PASSWORD', default='luan012683'),
+        'PASSWORD': env('DB_PASSWORD', default='123456'),
         'HOST': env('DB_HOST', default='localhost'),
         'PORT': env('DB_PORT', default='5432'),
     }
